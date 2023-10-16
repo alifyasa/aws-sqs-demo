@@ -73,7 +73,7 @@ function DisplayMessage(props: {
         <p className="text-xl">{message.Body}</p>
         <p className="text-xs font-light italic">{message.MessageId}</p>
       </div>
-      <p className="p-4 place-self-center text-base">
+      <p className="w-1/4 p-4 place-self-center text-base">
         {isSelected ? "SELECTED" : ""}
       </p>
     </div>
