@@ -187,7 +187,7 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
           <div className="flex items-center justify-center h-full uppercase text-2xl">
             <p>{statusState.message}</p>
           </div>
-        ) : listOfMessages.length === 0 ? (
+        ) : listOfMessages.length !== 0 ? (
           listOfMessages.map((item, index) => (
             <DisplayMessage
               index={index}
