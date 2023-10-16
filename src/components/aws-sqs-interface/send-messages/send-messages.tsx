@@ -68,6 +68,7 @@ function SendMessages(props: SendMessagesProps) {
         disabled={isLoading}
         value={inputText}
         onChange={onInputChage}
+        placeholder={"AWS SQS Message Body"}
       />
     </div>
   );

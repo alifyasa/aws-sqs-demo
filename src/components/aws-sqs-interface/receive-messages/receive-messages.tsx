@@ -73,9 +73,9 @@ function DisplayMessage(props: {
         <p className="text-xl">{message.Body}</p>
         <p className="text-xs font-light italic">{message.MessageId}</p>
       </div>
-      {isSelected ? (
-        <p className="p-4 place-self-center text-base">SELECTED</p>
-      ) : null}
+      <p className="p-4 place-self-center text-base">
+        {isSelected ? "SELECTED" : ""}
+      </p>
     </div>
   );
 }
@@ -86,8 +86,8 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
   const [isReceiveLoading, setIsReceiveLoading] = useState(false);
   const [listOfMessages, setListOfMessages] = useState<Message[]>([]);
   const [statusState, setStatusState] = useState({
-    show: false,
-    message: "",
+    show: true,
+    message: "No Messages",
   });
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -188,14 +188,16 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
             <p>{statusState.message}</p>
           </div>
         ) : listOfMessages.length !== 0 ? (
-          listOfMessages.map((item, index) => (
-            <DisplayMessage
-              index={index}
-              message={item}
-              onSelect={onSelectDisplayMessage}
-              onDeselect={onDeselectDisplayMessage}
-            />
-          ))
+          <div className="w-full h-full overflow-scroll">
+            {listOfMessages.map((item, index) => (
+              <DisplayMessage
+                index={index}
+                message={item}
+                onSelect={onSelectDisplayMessage}
+                onDeselect={onDeselectDisplayMessage}
+              />
+            ))}
+          </div>
         ) : (
           <div className="w-full h-full flex justify-center items-center">
             <MoonLoader size={40} />
