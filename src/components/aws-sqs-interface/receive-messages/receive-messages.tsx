@@ -8,7 +8,7 @@ import {
   SQSClient,
 } from "@aws-sdk/client-sqs";
 import { useCallback, useEffect, useState } from "react";
-import { BeatLoader } from "react-spinners";
+import { BeatLoader, MoonLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { ReceiveMessagesProps } from "./receive-messages.props";
 
@@ -120,6 +120,7 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
   };
   const onDeleteButtonClick = async () => {
     setIsDeleteLoading(true);
+    console.log(listOfToBeDeletedMessages);
     deleteMessageBatch(listOfToBeDeletedMessages)
       .then((output) => {
         output.Successful?.forEach((output) =>
@@ -129,6 +130,7 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
           toast.error(`Failed to Delete ${output.Id}`),
         );
         setListOfToBeDeletedMessages([]);
+        setListOfMessages([]);
         setStatusState({ show: true, message: "Please Receive Again" });
       })
       .catch((error) => {
@@ -138,18 +140,20 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
         setIsDeleteLoading(false);
       });
   };
-  const onSelectDisplayMessage = (id: string, message: Message) => {
+
+  const onSelectDisplayMessage = useCallback((id: string, message: Message) => {
     const deleteEntry: DeleteMessageBatchRequestEntry = {
       Id: id,
       ReceiptHandle: message.ReceiptHandle,
     };
     setListOfToBeDeletedMessages((prev) => [...prev, deleteEntry]);
-  };
-  const onDeselectDisplayMessage = (id: string) => {
+  }, []);
+  const onDeselectDisplayMessage = useCallback((id: string) => {
     setListOfToBeDeletedMessages((prev) =>
       prev.filter((entry) => entry.Id !== id),
     );
-  };
+  }, []);
+
   return (
     <div className={className}>
       <div className="w-full flex justify-center items-center h-12 rounded-t border-2 border-gray-400 border-b-0">
@@ -183,7 +187,7 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
           <div className="flex items-center justify-center h-full uppercase text-2xl">
             <p>{statusState.message}</p>
           </div>
-        ) : (
+        ) : listOfMessages.length === 0 ? (
           listOfMessages.map((item, index) => (
             <DisplayMessage
               index={index}
@@ -192,6 +196,10 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
               onDeselect={onDeselectDisplayMessage}
             />
           ))
+        ) : (
+          <div className="w-full h-full flex justify-center items-center">
+            <MoonLoader size={40} />
+          </div>
         )}
       </div>
     </div>

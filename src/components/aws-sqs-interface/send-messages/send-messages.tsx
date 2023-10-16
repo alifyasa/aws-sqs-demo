@@ -36,6 +36,7 @@ function SendMessages(props: SendMessagesProps) {
   };
   const onSendButtonClick = async () => {
     setIsLoading(true);
+    console.log(inputText);
     sendMessage(inputText)
       .then((output) => {
         toast.success(`Sent message ${output.MessageId}`);
