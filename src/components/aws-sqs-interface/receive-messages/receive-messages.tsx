@@ -58,7 +58,7 @@ function DisplayMessage(props: {
     } else {
       onDeselect(message.MessageId ?? index.toString());
     }
-  }, [isSelected]);
+  }, [isSelected, message, index, onSelect, onDeselect]);
 
   const onClick = () => {
     setIsSelected((prev) => !prev);
@@ -83,7 +83,7 @@ function DisplayMessage(props: {
 function ReceiveMessages(props: ReceiveMessagesProps) {
   const { SQSClient, QueueUrl, className = "" } = props;
 
-  const [isPollLoading, setIsPollLoading] = useState(false);
+  const [isReceiveLoading, setIsReceiveLoading] = useState(false);
   const [listOfMessages, setListOfMessages] = useState<Message[]>([]);
   const [statusState, setStatusState] = useState({
     show: false,
@@ -98,8 +98,8 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
   const receiveMessage = useSQSReceiveMessage(SQSClient, QueueUrl);
   const deleteMessageBatch = useSQSDeleteMessageBatch(SQSClient, QueueUrl);
 
-  const onPollButtonClick = async () => {
-    setIsPollLoading(true);
+  const onReceiveButtonClick = async () => {
+    setIsReceiveLoading(true);
     setStatusState((prev) => {
       return { ...prev, show: false };
     });
@@ -115,7 +115,7 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
         toast.error(error.toString());
       })
       .finally(() => {
-        setIsPollLoading(false);
+        setIsReceiveLoading(false);
       });
   };
   const onDeleteButtonClick = async () => {
@@ -129,7 +129,7 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
           toast.error(`Failed to Delete ${output.Id}`),
         );
         setListOfToBeDeletedMessages([]);
-        setStatusState({ show: true, message: "Please Poll Again" });
+        setStatusState({ show: true, message: "Please Receive Again" });
       })
       .catch((error) => {
         toast.error(error.toString());
@@ -147,22 +147,22 @@ function ReceiveMessages(props: ReceiveMessagesProps) {
   };
   const onDeselectDisplayMessage = (id: string) => {
     setListOfToBeDeletedMessages((prev) =>
-      prev.filter((entry) => entry.Id != id),
+      prev.filter((entry) => entry.Id !== id),
     );
   };
   return (
     <div className={className}>
       <div className="w-full flex justify-center items-center h-12 rounded-t border-2 border-gray-400 border-b-0">
-        {isPollLoading ? (
+        {isReceiveLoading ? (
           <div className="w-1/2 flex justify-center">
             <BeatLoader size={15} />
           </div>
         ) : (
           <button
             className="w-1/2 h-full py-2 hover:bg-gray-300 active:bg-gray-400"
-            onClick={onPollButtonClick}
+            onClick={onReceiveButtonClick}
           >
-            POLL
+            RECEIVE
           </button>
         )}
         {isDeleteLoading ? (
